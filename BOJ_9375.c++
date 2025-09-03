@@ -14,10 +14,30 @@
 // 출력
 // 각 테스트 케이스에 대해 해빈이가 알몸이 아닌 상태로 의상을 입을 수 있는 경우를 출력하시오.
 
-#include <stdio.h>
+#include <string>
+#include <sstream>
+#include <iostream>
+#include <list>
+
+using namespace std;
 
 // 메인 함수
 int main(void) {
+    int n; // 의상의 수
+
+    // 기본 설정
+    cin >> n;
+
+    // 의상들 입력
+    string cloth_name; 
+    list<string> cloth_List;
+    stringstream ss;
+
+    for(int i = 0; i < n; i++) {
+        cin >> cloth_name;
+        ss.str(cloth_name);
+
+    }
 
 
     return 0;
