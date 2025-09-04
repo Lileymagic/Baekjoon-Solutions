@@ -33,14 +33,12 @@ int main(void) {
         val[i] = val[i-5] + val[i-1];
     }
 
-    cout << val[90];
-
-    // // 순회하며 출력
-    // int n;
-    // for(int i = 0; i < T; i++) {
-    //     cin >> n;
-    //     cout << val[n-1] << endl;
-    // }
+    // 순회하며 출력
+    int n;
+    for(int i = 0; i < T; i++) {
+        cin >> n;
+        cout << val[n-1] << endl;
+    }
 
     return 0;
 }
