@@ -1,0 +1,29 @@
+# ## Created by 코딩 파트너 for C++/BOJ projects ##
+
+# 운영체제 생성 파일 (Operating System generated files)
+.DS_Store
+Thumbs.db
+
+# 컴파일된 실행 파일 (Compiled executables)
+*.exe
+*.out
+*.app
+
+# 컴파일 중간 파일 (Intermediate compiled files)
+*.o
+*.obj
+*.suo
+*.user
+*.ilk
+*.pdb
+
+# 빌드 폴더 (Build directories)
+build/
+Debug/
+Release/
+bin/
+
+# IDE/에디터 설정 파일 (IDE/Editor specific files)
+.vscode/
+.vs/
+*.code-workspace
