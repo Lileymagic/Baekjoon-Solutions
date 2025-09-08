@@ -57,12 +57,50 @@ int main(void) {
     // 벡터 정렬
     sort(blocks.begin(), blocks.end());
 
-    int max_height, min_height;
     
-    // 최고, 최저 높이 추출
-    blocks[0] = min_height;
-    blocks[blocks.size() - 1] = max_height;
+    // 결과 계산 (brute force)
+    int need, cutted;
+    int result_time = -1, result_height = 0, cur_time;
+    int j = 0;
+    while(1) {
+        if (j == 257) break;
 
-    
+        need = 0; cutted = 0;
+
+        // j를 만들기 위해 채워야 하는 양 계산
+        int i = 0;
+        while(1) {
+            if (blocks[i] >= j) break;
+            
+            need += (j - blocks[i]);
+            i++;
+        }
+
+        // 베어내야 하는 양 계산
+        i = N * M - 1;
+        while(1) {
+            if (blocks[i] <= j) continue;
+
+            cutted += (blocks[i] - j);
+            i--;
+        }
+        
+        // 해당 높이를 채울 수 없다면 반복 끝
+        if(need > cutted + B){
+            break;
+        }else {
+            // 걸리는 시간 계산 후 결과에 반영
+            cur_time = (cutted * 2) + need;
+            if(cur_time < result_time || result_time == -1){
+                result_time = cur_time;
+                if(j > result_height) result_height = j;
+            }
+        }
+        j++;
+    }
+
+    // 결과 출력
+    cout << result_time << " " << result_height;
+
     return 0;
 }
