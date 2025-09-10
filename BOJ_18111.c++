@@ -36,7 +36,6 @@
 
 #include <iostream>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
@@ -53,50 +52,28 @@ int main(void) {
     for (int i = 0; i < N * M; i++) {
         cin >> blocks[i];
     }
-
-    // 벡터 정렬
-    sort(blocks.begin(), blocks.end());
-
     
     // 결과 계산 (brute force)
-    int need, cutted;
+    long long need, cutted;
     int result_time = -1, result_height = 0, cur_time;
-    int j = 0;
-    while(1) {
-        if (j == 257) break;
-
+    for (int j = 0; j <= 256; j++) {
         need = 0; cutted = 0;
 
-        // j를 만들기 위해 채워야 하는 양 계산
-        int i = 0;
-        while(1) {
-            if (blocks[i] >= j) break;
-            
-            need += (j - blocks[i]);
-            i++;
-        }
-
-        // 베어내야 하는 양 계산
-        i = N * M - 1;
-        while(1) {
-            if (blocks[i] <= j) continue;
-
-            cutted += (blocks[i] - j);
-            i--;
+        // j를 만들기 위해 채워야 하는 양, 베어내야 하는 양 계산
+        for (int h : blocks) {
+            if (h > j) cutted += (h - j);
+            else need += (j - h);
         }
         
-        // 해당 높이를 채울 수 없다면 반복 끝
-        if(need > cutted + B){
-            break;
-        }else {
-            // 걸리는 시간 계산 후 결과에 반영
-            cur_time = (cutted * 2) + need;
-            if(cur_time < result_time || result_time == -1){
-                result_time = cur_time;
-                if(j > result_height) result_height = j;
-            }
+        if (need > cutted + B) continue;
+
+        // 걸리는 시간 계산 후 결과에 반영
+        cur_time = (cutted * 2) + need;
+
+        if (result_time == -1 || cur_time <= result_time) {
+            result_time = cur_time;
+            result_height = j;
         }
-        j++;
     }
 
     // 결과 출력
