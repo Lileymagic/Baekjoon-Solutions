@@ -41,45 +41,7 @@
 
 using namespace std;
 
-// 주사위의 최소 이동값 계산
-int calc_dice(const map<int, int>& special, int current) {
-    int result = INT_MAX;
-    int special_val;
-    // 최소 이동값 계산은 다음 공식을 따른다.
-    // x 위치에 가기 위한 최소 이동값은 다음 1~3번의 최소값 + 1이다.
-    // 1. x-1 ~ x-6 번째 위치까지 가는 데 필요한 최소 이동값
-    // 2. x 위치와 연결된 사다리까지의 최소 이동값 (100은 제외)
-    // 3. x 위치와 연결된 뱀 까지의 최소 이동값 (100은 제외)
 
-    // 초기값 설정
-    if (current == 1) return 0;
-    if (current <= 7) return 1;
-
-    // 최소값 계산
-    if (current == 100) {
-        result = min(result, calc_dice(special, 99));
-        result = min(result, calc_dice(special, 98));
-        result = min(result, calc_dice(special, 97));
-        result = min(result, calc_dice(special, 96));
-        result = min(result, calc_dice(special, 95));
-        result = min(result, calc_dice(special, 94));
-
-        result++;
-        return result;
-    } else {
-        if (special.count(current)) {
-            
-            result = min(result, calc_dice(special, special[current]));
-        }
-
-        for (int i = current - 1; i >= current - 6; i--) {
-            result = min(result, calc_dice(special, i));
-        }
-        
-        result++;
-        return result;
-    }
-}
 
 int main(void){
     // 기본 설정
