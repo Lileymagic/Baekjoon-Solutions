@@ -38,46 +38,35 @@
 #include <vector>
 #include <map>
 #include <climits>
+#include <queue>
 
 using namespace std;
 
-// 주사위의 최소 이동값 계산
-int calc_dice(const map<int, int>& special, int current) {
-    int result = INT_MAX;
-    int special_val;
-    // 최소 이동값 계산은 다음 공식을 따른다.
-    // x 위치에 가기 위한 최소 이동값은 다음 1~3번의 최소값 + 1이다.
-    // 1. x-1 ~ x-6 번째 위치까지 가는 데 필요한 최소 이동값
-    // 2. x 위치와 연결된 사다리까지의 최소 이동값 (100은 제외)
-    // 3. x 위치와 연결된 뱀 까지의 최소 이동값 (100은 제외)
+void bfs (const map<int, int>& special, vector<int>& visited) {
+    queue<int> q;
+    q.push(1);
+    visited[1] = 0;
 
-    // 초기값 설정
-    if (current == 1) return 0;
-    if (current <= 7) return 1;
+    int cur;
+    int next;
+    while(!q.empty()) {
+        cur = q.front();
+        q.pop();
 
-    // 최소값 계산
-    if (current == 100) {
-        result = min(result, calc_dice(special, 99));
-        result = min(result, calc_dice(special, 98));
-        result = min(result, calc_dice(special, 97));
-        result = min(result, calc_dice(special, 96));
-        result = min(result, calc_dice(special, 95));
-        result = min(result, calc_dice(special, 94));
+        for (int i = 1; i <= 6; i++) {
+            next = cur + i;
 
-        result++;
-        return result;
-    } else {
-        if (special.count(current)) {
-            
-            result = min(result, calc_dice(special, special[current]));
+            if (special.count(next)) {
+                auto it = special.find(next);
+                next = it -> second;
+            }
+
+            if (visited[next] == -1) {
+                visited[next] = visited[cur] + 1;
+                if (next == 100) return;
+                q.push(next);
+            }
         }
-
-        for (int i = current - 1; i >= current - 6; i--) {
-            result = min(result, calc_dice(special, i));
-        }
-        
-        result++;
-        return result;
     }
 }
 
@@ -91,15 +80,19 @@ int main(void){
     
     // 사다리, 뱀의 정보 입력
     map<int, int> special;
+    vector<int> visited(101, -1);
+
     int x, y;
     for (int i = 0 ; i < n + m; i++) {
         cin >> x >> y;
 
-        special[y] = x;
+        special[x] = y;
     }
 
     // 정답 출력
-    cout << calc_dice(special, 100);
+    bfs(special, visited);
+
+    cout << visited[100];
 
     return 0;
 }
