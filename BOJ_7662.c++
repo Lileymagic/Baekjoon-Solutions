@@ -1,231 +1,74 @@
-<<<<<<< HEAD
-// 문제
-// 이중 우선순위 큐(dual priority queue)는 전형적인 우선순위 큐처럼 데이터를 삽입, 삭제할 수 있는 자료 구조이다. 
-// 전형적인 큐와의 차이점은 데이터를 삭제할 때 
-// 연산(operation) 명령에 따라 우선순위가 가장 높은 데이터 또는 가장 낮은 데이터 중 하나를 삭제하는 점이다. 
-// 이중 우선순위 큐를 위해선 두 가지 연산이 사용되는데, 하나는 데이터를 삽입하는 연산이고 다른 하나는 데이터를 삭제하는 연산이다. 
-// 데이터를 삭제하는 연산은 또 두 가지로 구분되는데 하나는 우선순위가 가장 높은 것을 삭제하기 위한 것이고 
-// 다른 하나는 우선순위가 가장 낮은 것을 삭제하기 위한 것이다.
-
-// 정수만 저장하는 이중 우선순위 큐 Q가 있다고 가정하자. Q에 저장된 각 정수의 값 자체를 우선순위라고 간주하자.
-
-// Q에 적용될 일련의 연산이 주어질 때 이를 처리한 후 최종적으로 Q에 저장된 데이터 중 최댓값과 최솟값을 출력하는 프로그램을 작성하라.
-
-// 입력
-// 입력 데이터는 표준입력을 사용한다. 입력은 T개의 테스트 데이터로 구성된다. 
-// 입력의 첫 번째 줄에는 입력 데이터의 수를 나타내는 정수 T가 주어진다. 
-// 각 테스트 데이터의 첫째 줄에는 Q에 적용할 연산의 개수를 나타내는 정수 k (k ≤ 1,000,000)가 주어진다. 
-// 이어지는 k 줄 각각엔 연산을 나타내는 문자(‘D’ 또는 ‘I’)와 정수 n이 주어진다. 
-// ‘I n’은 정수 n을 Q에 삽입하는 연산을 의미한다. 동일한 정수가 삽입될 수 있음을 참고하기 바란다. 
-// ‘D 1’는 Q에서 최댓값을 삭제하는 연산을 의미하며, ‘D -1’는 Q 에서 최솟값을 삭제하는 연산을 의미한다. 
-// 최댓값(최솟값)을 삭제하는 연산에서 최댓값(최솟값)이 둘 이상인 경우, 하나만 삭제됨을 유념하기 바란다.
-
-// 만약 Q가 비어있는데 적용할 연산이 ‘D’라면 이 연산은 무시해도 좋다. Q에 저장될 모든 정수는 -231 이상 231 미만인 정수이다.
-
-// 출력
-// 출력은 표준출력을 사용한다. 각 테스트 데이터에 대해, 모든 연산을 처리한 후 Q에 남아 있는 값 중 최댓값과 최솟값을 출력하라. 
-// 두 값은 한 줄에 출력하되 하나의 공백으로 구분하라. 만약 Q가 비어있다면 ‘EMPTY’를 출력하라.
-
 #include <iostream>
-#include <deque>
+#include <vector>
+#include <queue>
+#include <map>
+#include <set>
 #include <algorithm>
+#include <string>
 
 using namespace std;
 
-=======
-#include <iostream>
-#include <algorithm>
-#include <cmath>
-
-using namespace std;
-
-int getPowerOfTwo_Log(long long int n) {
-    int result = -1;
-    long long int val = 1;
-
-    while (n >= val) {
-        result++;
-        val *= 2;
+struct Node {
+    long long int val;
+    int id;
+    bool operator<(const Node &o) const {
+        return val < o.val;
     }
-
-    return result;
-}
-
-// 이중 우선순위 큐
-class duplicate_priority_queue {
-private:
-    long long int array[1000002];
-    int cnt = 1;
-
-public:
-    void push(long long int i) {
-        array[cnt] = i;
-        cnt++;
-
-        // 자식 노드가 부모 노드보다 작을 때
-        int cur_node = cnt - 1;
-        while(cur_node != 1 && array[cur_node] < array[cur_node / 2]) {
-            int temp = array[cur_node];
-            array[cur_node] = array[cur_node / 2];
-            array[cur_node / 2] = temp;
-
-            cur_node = cur_node / 2;
-        }
+ };
+ struct NodeMin {
+    bool operator()(const Node &a, const Node &b) const {
+        return a.val > b.val;
     }
+ };
 
-    void pop_max() {
-        if (cnt <= 1) return; 
+ int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-        // (추가) 가장 큰 노드 찾기
-        int power = (int)pow(2, getPowerOfTwo_Log(cnt - 1));
-        if (cnt == 2) power = 1;
+    int T; cin >> T;
 
-        int max_pos = power;
-        for (int i = power; i < cnt; i++) {
-            if (array[max_pos] < array[i]) max_pos = i;
-        }
+     while (T--) {
+        int k; cin >> k;
+        priority_queue<Node> maxQ;
+        priority_queue<Node, vector<Node>, NodeMin> minQ;
+        vector<bool> visited(k, false); // 각 연산마다 id 부여
+        int id = 0;
 
-        array[max_pos] = array[cnt - 1];
-        cnt--;
-    }
-
-    void pop_min() {
-        if (cnt <= 1) return; 
-
-        cnt--;
-        long long int dum = array[1];
-        array[1] = array[cnt];
-        
-        // (추가) 부모 노드가 자식 노드보다 클 때
-        int cur_node = 1;
-        while(1) {
-            if (cur_node * 2 > cnt - 1) break;
-            else if (cur_node * 2 == cnt - 1) {
-                if (array[cur_node] < array[cnt - 1]) break;
-                else {
-                    long long int temp = array[cur_node];
-                    array[cur_node] = array[cnt - 1];
-                    array[cnt - 1] = temp;
-                    break;
-                }
-            } else {
-                if (array[cur_node] > array[cur_node * 2] || array[cur_node] > array[cur_node * 2 + 1]) {
-                    if (array[cur_node * 2] <= array[cur_node * 2 + 1]) {
-                        long long int temp = array[cur_node];
-                        array[cur_node] = array[cur_node * 2];
-                        array[cur_node * 2] = temp;
-                        cur_node *= 2;
-                    } else {
-                        long long int temp = array[cur_node];
-                        array[cur_node] = array[cur_node * 2 + 1];
-                        array[cur_node * 2 + 1] = temp;
-                        cur_node = cur_node * 2 + 1;
-                    }
-                } else break;
-            }
-        }
-    }
-
-    long long int front() {
-        if (cnt <= 1) throw runtime_error("front() called on empty queue");
-        return array[1];
-    }
-
-    long long int back() {
-        if (cnt <= 1) throw runtime_error("back() called on empty queue");
-
-        int power = (int)pow(2, getPowerOfTwo_Log(cnt - 1));
-        if (cnt == 2) power = 1;
-
-        int max_pos = power;
-        for (int i = power; i < cnt; i++) {
-            if (array[max_pos] < array[i]) max_pos = i;
-        }
-
-        return array[max_pos];
-    }
-
-    bool empty() {
-        return cnt == 1;
-    }
-
-    void clear() {
-        cnt = 1;
-    }
-};
-
->>>>>>> 35c7d56b340c7f9996d7a422c20eee3387603731
-int main(void) {
-    // 기본 설정
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-
-<<<<<<< HEAD
-    int T;
-    cin >> T;
-
-    deque<long long int> dq;
-    int k;
-    long long int input;
-    char mode;
-
-    for (int i = 0; i < T; i++) {
-        cin >> k;
-        for (int j = 0; j < k; j++) {
-            cin >> mode;
-
-            switch(mode) {
-                case 'I':
-                cin >> input;
-                dq.push_back(input);
-                break;
-                
-                case 'D':
-                cin >> input;
-                if (dq.empty()) continue;
-
-                if (input == 1) {
-                    sort(dq.begin(), dq.end());
-                    dq.pop_back();
-                } else {
-                    sort(dq.begin(), dq.end());
-                    dq.pop_front();
-                }
-            }
-        }
-        sort(dq.begin(), dq.end());
-        if (dq.empty()) cout << "EMPTY\n";
-        else cout << dq.back() << " " << dq.front() << "\n";
-    }   
-=======
-    int T, k;
-    long long int n;
-    char c;
-    cin >> T;
-
-    // 결과 계산
-    duplicate_priority_queue q;
-    for (int i = 0; i < T; i++) {
-        cin >> k;
         for (int i = 0; i < k; i++) {
-            cin >> c;   cin >> n;
-            switch(c){
-                case 'I':
-                    q.push(n);
-                    break;
-
-                case 'D':
-                    if (n == 1 && !q.empty()) q.pop_max();
-
-                    if (n == -1 && !q.empty()) q.pop_min();
+            char cmd; long long int n;
+            cin >> cmd >> n;
+            if (cmd == 'I') {
+                maxQ.push({n, id});
+                minQ.push({n, id});
+                visited[id] = true;
+                id++;
+            } else if (cmd == 'D') {
+                if (n == 1) { // 최댓값 삭제
+                    while (!maxQ.empty() && !visited[maxQ.top().id]) maxQ.pop();
+                    if (!maxQ.empty()) {
+                        visited[maxQ.top().id] = false;
+                        maxQ.pop();
+                    }
+                } else { // 최솟값 삭제
+                    while (!minQ.empty() && !visited[minQ.top().id]) minQ.pop();
+                    if (!minQ.empty()) {
+                        visited[minQ.top().id] = false;
+                        minQ.pop();
+                    }
+                }
             }
         }
 
-        if (!q.empty()) cout << q.back() << " " << q.front() << "\n";
-        else cout << "EMPTY\n";
-        q.clear();
-    }
->>>>>>> 35c7d56b340c7f9996d7a422c20eee3387603731
+        // 마지막 정리
+        while (!maxQ.empty() && !visited[maxQ.top().id]) maxQ.pop();
+        while (!minQ.empty() && !visited[minQ.top().id]) minQ.pop();
 
-    return 0;
-}
+        if (maxQ.empty() || minQ.empty()) {
+            cout << "EMPTY\n";
+        } else {
+            cout << maxQ.top().val << " " << minQ.top().val << "\n";
+        }
+     }
+
+     return 0;
+ }
